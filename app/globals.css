@@ -1,0 +1,485 @@
+@import "tailwindcss";
+
+:root {
+  --cream: #fff8f5;
+  --pink: #f9dce5;
+  --rose: #e9a9bb;
+  --text: #5c4149;
+  --gold: #d9a441;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  overflow: hidden;
+  background: var(--cream);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* =========================
+   SCENE
+========================= */
+
+.scene-one {
+  position: relative;
+  width: 100vw;
+  height: 100svh;
+  min-height: 620px;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    radial-gradient(
+      circle at 50% 38%,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 239, 244, 0.8) 35%,
+      rgba(250, 221, 230, 0.9) 70%,
+      rgba(244, 205, 218, 1) 100%
+    );
+}
+
+/* =========================
+   BACKGROUND GLOW
+========================= */
+
+.ambient-glow {
+  position: absolute;
+  width: 65vw;
+  height: 65vw;
+  max-width: 650px;
+  max-height: 650px;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.55);
+
+  filter: blur(80px);
+
+  pointer-events: none;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.scene-content {
+  position: relative;
+  z-index: 5;
+
+  width: min(90%, 520px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+}
+
+/* =========================
+   TEXT
+========================= */
+
+.intro-text {
+  margin-top: 20px;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+
+  color: rgba(92, 65, 73, 0.6);
+}
+
+.intro-text h1 {
+  margin: 0;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: clamp(2.8rem, 11vw, 5.2rem);
+
+  font-weight: 500;
+
+  letter-spacing: -0.04em;
+
+  color: var(--text);
+}
+
+.intro-text h1 span {
+  display: inline-block;
+
+  margin-left: 8px;
+
+  font-size: 0.45em;
+}
+
+.subtitle {
+  margin: 14px 0 0;
+
+  font-size: clamp(0.95rem, 3.5vw, 1.15rem);
+
+  color: rgba(92, 65, 73, 0.68);
+
+  letter-spacing: 0.01em;
+}
+
+/* =========================
+   TEDDY
+========================= */
+
+.teddy {
+  position: relative;
+
+  width: 180px;
+  height: 190px;
+
+  filter: drop-shadow(
+    0 20px 30px rgba(102, 64, 73, 0.18)
+  );
+}
+
+.teddy-head {
+  position: absolute;
+
+  width: 105px;
+  height: 95px;
+
+  left: 50%;
+  top: 20px;
+
+  transform: translateX(-50%);
+
+  border-radius: 48% 48% 45% 45%;
+
+  background:
+    radial-gradient(
+      circle at 35% 25%,
+      #fff1df,
+      #d8a87e 65%,
+      #bb835d
+    );
+
+  box-shadow:
+    inset -8px -10px 15px rgba(100, 57, 36, 0.12),
+    inset 8px 8px 15px rgba(255, 255, 255, 0.35);
+}
+
+.teddy-ear {
+  position: absolute;
+
+  width: 45px;
+  height: 45px;
+
+  top: 5px;
+
+  border-radius: 50%;
+
+  background: #c99168;
+}
+
+.teddy-ear.left {
+  left: 25px;
+}
+
+.teddy-ear.right {
+  right: 25px;
+}
+
+.eye {
+  position: absolute;
+
+  width: 7px;
+  height: 9px;
+
+  top: 40px;
+
+  border-radius: 50%;
+
+  background: #49342e;
+}
+
+.left-eye {
+  left: 32px;
+}
+
+.right-eye {
+  right: 32px;
+}
+
+.teddy-muzzle {
+  position: absolute;
+
+  width: 44px;
+  height: 34px;
+
+  left: 50%;
+  bottom: 15px;
+
+  transform: translateX(-50%);
+
+  border-radius: 50%;
+
+  background: #f4d2ae;
+}
+
+.nose {
+  position: absolute;
+
+  width: 12px;
+  height: 9px;
+
+  left: 50%;
+  top: 8px;
+
+  transform: translateX(-50%);
+
+  border-radius: 50%;
+
+  background: #5b3b31;
+}
+
+.mouth {
+  position: absolute;
+
+  width: 12px;
+  height: 6px;
+
+  left: 50%;
+  top: 17px;
+
+  transform: translateX(-50%);
+
+  border-bottom: 2px solid #5b3b31;
+
+  border-radius: 50%;
+}
+
+.teddy-body {
+  position: absolute;
+
+  width: 125px;
+  height: 105px;
+
+  left: 50%;
+  bottom: 0;
+
+  transform: translateX(-50%);
+
+  border-radius: 48% 48% 40% 40%;
+
+  background:
+    radial-gradient(
+      circle at 35% 20%,
+      #f1cda9,
+      #c99168 70%
+    );
+}
+
+.teddy-belly {
+  position: absolute;
+
+  width: 70px;
+  height: 58px;
+
+  left: 50%;
+  top: 23px;
+
+  transform: translateX(-50%);
+
+  border-radius: 50%;
+
+  background: #edc89f;
+}
+
+/* =========================
+   FLOWER
+========================= */
+
+.flower {
+  position: absolute;
+
+  right: 4px;
+  bottom: 43px;
+
+  transform: rotate(-12deg);
+}
+
+.flower span {
+  display: block;
+
+  font-size: 3rem;
+
+  filter: drop-shadow(
+    0 5px 5px rgba(100, 50, 50, 0.15)
+  );
+}
+
+.stem {
+  position: absolute;
+
+  width: 3px;
+  height: 48px;
+
+  left: 24px;
+  top: 42px;
+
+  background: #739b70;
+
+  transform: rotate(12deg);
+
+  transform-origin: top;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.surprise-button {
+  margin-top: 34px;
+
+  border: 1px solid rgba(255, 255, 255, 0.8);
+
+  border-radius: 999px;
+
+  padding: 16px 28px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 232, 239, 0.85)
+    );
+
+  color: #754e59;
+
+  font-size: 0.95rem;
+
+  font-weight: 600;
+
+  letter-spacing: 0.02em;
+
+  box-shadow:
+    0 12px 35px rgba(139, 76, 96, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
+  cursor: pointer;
+
+  backdrop-filter: blur(12px);
+
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+
+.surprise-button:hover {
+  box-shadow:
+    0 16px 40px rgba(139, 76, 96, 0.22),
+    0 0 25px rgba(255, 174, 198, 0.25);
+}
+
+.surprise-button span {
+  margin-right: 8px;
+}
+
+/* =========================
+   FLOATING PETALS
+========================= */
+
+.petals {
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  overflow: hidden;
+}
+
+.petals span {
+  position: absolute;
+
+  font-size: 1.2rem;
+
+  opacity: 0.35;
+
+  animation: floatPetal 9s linear infinite;
+}
+
+.petals span:nth-child(1) {
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.petals span:nth-child(2) {
+  left: 30%;
+  animation-delay: 2s;
+}
+
+.petals span:nth-child(3) {
+  left: 58%;
+  animation-delay: 4s;
+}
+
+.petals span:nth-child(4) {
+  left: 78%;
+  animation-delay: 1s;
+}
+
+.petals span:nth-child(5) {
+  left: 90%;
+  animation-delay: 5s;
+}
+
+@keyframes floatPetal {
+  0% {
+    transform: translateY(110vh) rotate(0deg);
+  }
+
+  100% {
+    transform: translateY(-15vh) rotate(360deg);
+  }
+}
+
+/* =========================
+   DESKTOP
+========================= */
+
+@media (min-width: 768px) {
+  .scene-content {
+    transform: translateY(-20px);
+  }
+
+  .teddy {
+    width: 210px;
+    height: 220px;
+  }
+
+  .surprise-button {
+    font-size: 1rem;
+    padding: 17px 32px;
+  }
+}
+
+/* =========================
+   REDUCED MOTION
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .petals span {
+    animation: none;
+  }
+}
