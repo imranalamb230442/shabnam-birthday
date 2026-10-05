@@ -10,7 +10,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 
 
-import { useState, type CSSProperties } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 
 
 
@@ -36,6 +36,10 @@ export default function Home() {
 
   const [memoryIndex, setMemoryIndex] = useState(0);
 
+  const [letterOpen, setLetterOpen] = useState(false);
+  const [musicPlaying, setMusicPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
 
 
 
@@ -43,8 +47,16 @@ export default function Home() {
 
 
   const openSurprise = () => {
+    const audio = audioRef.current;
 
-
+    if (audio) {
+      audio.volume = 0.45;
+      void audio.play().then(() => {
+        setMusicPlaying(true);
+      }).catch(() => {
+        setMusicPlaying(false);
+      });
+    }
 
     setBlast(true);
 
@@ -99,6 +111,40 @@ export default function Home() {
 
 
     <main className="birthday-page">
+
+      <audio
+        ref={audioRef}
+        src="/happy-birthday.mp3"
+        loop
+        preload="auto"
+        aria-hidden="true"
+      />
+
+      {(musicPlaying || scene > 1) && (
+        <motion.button
+          type="button"
+          className="music-toggle"
+          aria-label={musicPlaying ? "Pause birthday music" : "Play birthday music"}
+          onClick={() => {
+            const audio = audioRef.current;
+            if (!audio) return;
+
+            if (audio.paused) {
+              void audio.play().then(() => setMusicPlaying(true));
+            } else {
+              audio.pause();
+              setMusicPlaying(false);
+            }
+          }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.94 }}
+        >
+          <span className="music-icon">{musicPlaying ? "♫" : "🔇"}</span>
+          <span>{musicPlaying ? "Music" : "Play music"}</span>
+        </motion.button>
+      )}
 
 
 
@@ -1406,285 +1452,174 @@ export default function Home() {
 
 
 
-              <AnimatePresence mode="wait">
-
-                {!candlesOut ? (
-
-                  <motion.div
-
-                    key="wish-before"
-
-                    className="wish-before"
-
-                    initial={{ opacity: 0 }}
-
-                    animate={{ opacity: 1 }}
-
-                    exit={{ opacity: 0, y: -10 }}
-
-                  >
-
-                    <p className="wish-instruction">
-
-                      Close your eyes, make a beautiful wish,
-
-                      <br />
-
-                      and blow the candles. 💗
-
-                    </p>
-
-
-
-                    <motion.div
-
-                      className="birthday-cake"
-
-                      initial={{ opacity: 0, y: 35, scale: 0.85 }}
-
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-
-                      transition={{
-
-                        delay: 0.15,
-
-                        duration: 0.8,
-
-                        type: "spring",
-
-                        bounce: 0.2,
-
-                      }}
-
-                    >
-
-                      <div className="cake-candles">
-
-                        {[0, 1, 2].map((index) => (
-
-                          <div
-
-                            className={`candle candle-${index + 1}`}
-
-                            key={index}
-
-                          >
-
-                            <motion.div
-
-                              className="flame"
-
-                              animate={{
-
-                                opacity: 1,
-
-                                scale: [1, 1.08, 0.96, 1],
-
-                              }}
-
-                              transition={{
-
-                                scale: {
-
-                                  duration: 0.8,
-
-                                  repeat: Infinity,
-
-                                  ease: "easeInOut",
-
-                                },
-
-                              }}
-
-                            >
-
-                              <span />
-
-                            </motion.div>
-
-                            <div className="candle-stick" />
-
-                          </div>
-
-                        ))}
-
-                      </div>
-
-
-
-                      <div className="cake-top">
-
-                        <div className="cake-heart-row">
-
-                          <span>♡</span>
-
-                          <span>♡</span>
-
-                          <span>♡</span>
-
-                          <span>♡</span>
-
-                        </div>
-
-                        <div className="cake-cream cream-1" />
-
-                        <div className="cake-cream cream-2" />
-
-                        <div className="cake-cream cream-3" />
-
-                        <div className="cake-cream cream-4" />
-
-                      </div>
-
-
-
-                      <div className="cake-middle">
-
-                        <div className="cake-drip drip-1" />
-
-                        <div className="cake-drip drip-2" />
-
-                        <div className="cake-drip drip-3" />
-
-                        <div className="cake-drip drip-4" />
-
-                        <div className="cake-drip drip-5" />
-
-                      </div>
-
-
-
-                      <div className="cake-bottom">
-
-                        <div className="cake-bottom-stars">✦ &nbsp; ✦ &nbsp; ✦</div>
-
-                      </div>
-
-
-
-                      <div className="cake-plate" />
-
-                    </motion.div>
-
-
-
-                    <motion.div
-
-                      className="blow-section"
-
-                      initial={{ opacity: 0, y: 15 }}
-
+              <div className={`wish-main ${candlesOut ? "wish-complete" : "wish-before"}`}>
+                <AnimatePresence mode="wait">
+                  {!candlesOut && (
+                    <motion.p
+                      key="wish-instruction"
+                      className="wish-instruction"
+                      initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
-
-                      transition={{ delay: 0.45 }}
-
+                      exit={{ opacity: 0, y: -8 }}
                     >
+                      Close your eyes, make a beautiful wish,
+                      <br />
+                      and blow the candles. 💗
+                    </motion.p>
+                  )}
+                </AnimatePresence>
 
+                <motion.div
+                  className="birthday-cake"
+                  initial={{ opacity: 0, y: 35, scale: 0.85 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{
+                    delay: 0.15,
+                    duration: 0.8,
+                    type: "spring",
+                    bounce: 0.2,
+                  }}
+                >
+                  <div className="cake-candles">
+                    {[0, 1, 2].map((index) => (
+                      <div className={`candle candle-${index + 1}`} key={index}>
+                        <AnimatePresence mode="wait">
+                          {!candlesOut ? (
+                            <motion.div
+                              key="flame"
+                              className="flame"
+                              animate={{
+                                opacity: 1,
+                                scale: [1, 1.08, 0.96, 1],
+                              }}
+                              exit={{
+                                opacity: 0,
+                                scale: 0.45,
+                                y: -8,
+                                transition: { duration: 0.28 },
+                              }}
+                              transition={{
+                                scale: {
+                                  duration: 0.8,
+                                  repeat: Infinity,
+                                  ease: "easeInOut",
+                                },
+                              }}
+                            >
+                              <span />
+                            </motion.div>
+                          ) : (
+                            <motion.div
+                              key="smoke"
+                              className="candle-smoke"
+                              initial={{ opacity: 0, y: 8, scale: 0.65 }}
+                              animate={{
+                                opacity: [0, 0.75, 0],
+                                y: -30,
+                                scale: [0.65, 1, 1.18],
+                              }}
+                              transition={{ duration: 1.4, ease: "easeOut" }}
+                            >
+                              〰
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                        <div className="candle-stick" />
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="cake-top">
+                    <div className="cake-heart-row">
+                      <span>♡</span>
+                      <span>♡</span>
+                      <span>♡</span>
+                      <span>♡</span>
+                    </div>
+                    <div className="cake-cream cream-1" />
+                    <div className="cake-cream cream-2" />
+                    <div className="cake-cream cream-3" />
+                    <div className="cake-cream cream-4" />
+                  </div>
+
+                  <div className="cake-middle">
+                    <div className="cake-drip drip-1" />
+                    <div className="cake-drip drip-2" />
+                    <div className="cake-drip drip-3" />
+                    <div className="cake-drip drip-4" />
+                    <div className="cake-drip drip-5" />
+                  </div>
+
+                  <div className="cake-bottom">
+                    <div className="cake-bottom-stars">✦ &nbsp; ✦ &nbsp; ✦</div>
+                  </div>
+
+                  <div className="cake-plate" />
+                </motion.div>
+
+                <AnimatePresence mode="wait">
+                  {!candlesOut ? (
+                    <motion.div
+                      key="blow-section"
+                      className="blow-section"
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ delay: 0.25 }}
+                    >
                       <button
-
                         className="blow-button"
-
                         onClick={blowCandles}
-
                         type="button"
-
                       >
-
                         🕯️ Blow the Candles
-
                       </button>
-
                       <p>Tap the button when you've made your wish ✨</p>
-
                     </motion.div>
-
-                  </motion.div>
-
-                ) : (
-
-                  <motion.div
-
-                    key="wish-after"
-
-                    className="wish-after"
-
-                    initial={{ opacity: 0, y: 25, scale: 0.96 }}
-
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-
-                    transition={{ duration: 0.65 }}
-
-                  >
-
-                    <p className="wish-instruction wish-after-line">
-
-                      Your wish has been sent to the stars. ✨
-
-                    </p>
-
-
-
-                    <div className="wish-success-icon">💗</div>
-
-                    <div className="wish-success-sparkles">✦ ✨ ✦</div>
-
-
-
-                    <h2>
-
-                      May your wish
-
-                      <br />
-
-                      come true!
-
-                    </h2>
-
-
-
-                    <p className="wish-success-text">
-
-                      And may this year bring you happiness,
-
-                      <br />
-
-                      love and beautiful moments.
-
-                    </p>
-
-
-
-                    <div className="wish-flowers">🌸 &nbsp; 🌷 &nbsp; 🌸</div>
-
-
-
-                    <motion.button
-
-                      className="continue-button wish-continue"
-
-                      onClick={() => {
-
-                        setCandlesOut(false);
-
-                        setScene(4);
-
-                      }}
-
-                      whileHover={{ scale: 1.04 }}
-
-                      whileTap={{ scale: 0.95 }}
-
+                  ) : (
+                    <motion.div
+                      key="wish-after"
+                      className="wish-after"
+                      initial={{ opacity: 0, y: 18, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ duration: 0.65, delay: 0.15 }}
                     >
+                      <p className="wish-instruction wish-after-line">
+                        Your wish has been sent to the stars. ✨
+                      </p>
 
-                      Continue to Memories 💗
+                      <div className="wish-success-icon">💗</div>
+                      <div className="wish-success-sparkles">✦ ✨ ✦</div>
 
-                    </motion.button>
+                      <h2>
+                        May your wish
+                        <br />
+                        come true!
+                      </h2>
 
-                  </motion.div>
+                      <p className="wish-success-text">
+                        And may this year bring you happiness,
+                        <br />
+                        love and beautiful moments.
+                      </p>
 
-                )}
+                      <div className="wish-flowers">🌸 &nbsp; 🌷 &nbsp; 🌸</div>
 
-              </AnimatePresence>
+                      <motion.button
+                        className="continue-button wish-continue"
+                        onClick={() => {
+                          setCandlesOut(false);
+                          setScene(4);
+                        }}
+                        whileHover={{ scale: 1.04 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Continue to My Letter 💌
+                      </motion.button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
             </div>
 
@@ -1696,15 +1631,197 @@ export default function Home() {
 
         {/* =====================================================
 
-            SCENE 4 — MEMORIES
+            SCENE 4 — BROTHER'S LETTER
+
+        ===================================================== */}
+
+        {scene === 4 && (
+          <motion.section
+            key="scene-four-letter"
+            className="scene-letter"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="letter-glow letter-glow-one" />
+            <div className="letter-glow letter-glow-two" />
+
+            <div className="letter-flowers" aria-hidden="true">
+              <span className="letter-flower flower-one">🌸</span>
+              <span className="letter-flower flower-two">🌷</span>
+              <span className="letter-flower flower-three">🌼</span>
+              <span className="letter-flower flower-four">🌸</span>
+              <span className="letter-flower flower-five">🌷</span>
+            </div>
+
+            <div className="letter-sparkles" aria-hidden="true">
+              <span>✦</span>
+              <span>✧</span>
+              <span>✦</span>
+              <span>✧</span>
+              <span>✦</span>
+              <span>✧</span>
+            </div>
+
+            <div className="letter-scene-content">
+              <motion.p
+                className="letter-label"
+                initial={{ opacity: 0, y: -15 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                💌 A LITTLE MESSAGE FOR YOU 💌
+              </motion.p>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+              >
+                From your brother <span>❤️</span>
+              </motion.h1>
+
+              <motion.p
+                className="letter-subtitle"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                There are some things that are better written than said.
+              </motion.p>
+
+              <div className="letter-stage">
+                <AnimatePresence mode="wait">
+                  {!letterOpen ? (
+                    <motion.div
+                      key="sealed-letter"
+                      className="envelope-wrapper"
+                      initial={{ opacity: 0, scale: 0.85, y: 30 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.92, y: -20 }}
+                      transition={{
+                        delay: 0.35,
+                        duration: 0.7,
+                        type: "spring",
+                        bounce: 0.2,
+                      }}
+                    >
+                      <motion.div
+                        className="envelope"
+                        whileHover={{ y: -8, rotate: -1 }}
+                        whileTap={{ scale: 0.97 }}
+                      >
+                        <div className="envelope-back" />
+                        <div className="envelope-paper">
+                          <span>For Shabnam 💗</span>
+                        </div>
+                        <div className="envelope-flap">
+                          <div className="flap-inner" />
+                        </div>
+                        <div className="envelope-front">
+                          <div className="envelope-fold-left" />
+                          <div className="envelope-fold-right" />
+                          <div className="envelope-fold-bottom" />
+                        </div>
+                        <div className="envelope-seal">💗</div>
+                      </motion.div>
+
+                      <motion.button
+                        className="open-letter-button"
+                        type="button"
+                        onClick={() => setLetterOpen(true)}
+                        whileHover={{ scale: 1.04 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        💌 Open My Letter
+                      </motion.button>
+
+                      <p className="letter-tap-hint">
+                        A little something from your brother ✨
+                      </p>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="opened-letter"
+                      className="letter-paper-open"
+                      initial={{ opacity: 0, y: 50, scale: 0.92 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ duration: 0.75, type: "spring", bounce: 0.15 }}
+                    >
+                      <div className="letter-paper-inner">
+                        <div className="letter-paper-decoration top-left">🌸</div>
+                        <div className="letter-paper-decoration top-right">🌷</div>
+
+                        <div className="letter-paper-heading">
+                          Dear Shabnam,
+                        </div>
+
+                        <div className="letter-body">
+                          <p>
+                            Happy Birthday to the most wonderful sister. ❤️
+                          </p>
+
+                          <p>
+                            I may not always say it, but I want you to know
+                            how special you are to me. You are not just my
+                            sister, you are someone who makes our family
+                            happier and our lives more beautiful.
+                          </p>
+
+                          <p>
+                            I hope this new year of your life brings you
+                            countless reasons to smile, beautiful memories,
+                            and everything your heart wishes for.
+                          </p>
+
+                          <p>
+                            Keep believing in yourself, keep smiling,
+                            and never stop being the amazing person you are. 🌸
+                          </p>
+                        </div>
+
+                        <div className="letter-signature">
+                          <span>With lots of love,</span>
+                          <strong>Your Brother ❤️</strong>
+                        </div>
+
+                        <div className="letter-bottom-flowers">
+                          🌸 &nbsp; 🌷 &nbsp; 🌸
+                        </div>
+                      </div>
+
+                      <motion.button
+                        className="letter-continue-button"
+                        type="button"
+                        onClick={() => {
+                          setLetterOpen(false);
+                          setScene(5);
+                        }}
+                        whileHover={{ scale: 1.04 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Continue to Memories 💗
+                      </motion.button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+          </motion.section>
+        )}
+
+
+        {/* =====================================================
+
+            SCENE 5 — MEMORIES
 
         ===================================================== */}
 
 
 
-        {scene === 4 && (
+        {scene === 5 && (
           <motion.section
-            key="scene-four"
+            key="scene-five"
             className="scene-four"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -1871,22 +1988,100 @@ export default function Home() {
               </div>
 
               <p className="memory-hint">Tap the arrows to explore ✨</p>
+
+              <motion.button
+                className="continue-button memory-continue"
+                type="button"
+                onClick={() => setScene(6)}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                One Last Surprise 🎁
+              </motion.button>
             </div>
           </motion.section>
         )}
 
 
+        {/* =====================================================
+
+            SCENE 6 — FINAL SURPRISE
+
+        ===================================================== */}
+
+        {scene === 6 && (
+          <motion.section
+            key="scene-six"
+            className="final-scene"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="final-scene-glow final-glow-one" />
+            <div className="final-scene-glow final-glow-two" />
+
+            <div className="final-scene-content">
+              <motion.div
+                className="final-teddy"
+                animate={{ y: [0, -8, 0], rotate: [0, -2, 2, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              >
+                🧸
+              </motion.div>
+
+              <motion.p
+                className="final-label"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                WAIT... ONE LAST THING ✨
+              </motion.p>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+              >
+                Happy Birthday,
+                <br />
+                Shabnam ❤️
+              </motion.h1>
+
+              <motion.div
+                className="final-gift"
+                animate={{ y: [0, -7, 0], rotate: [0, 1.5, -1.5, 0] }}
+                transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+              >
+                🎁
+              </motion.div>
+
+              <p className="final-message">
+                You deserve all the happiness in the world.
+                <br />
+                Keep smiling, keep shining, and never stop being you. 🌸
+              </p>
+
+              <motion.button
+                className="continue-button final-replay-button"
+                type="button"
+                onClick={() => {
+                  setCandlesOut(false);
+                  setLetterOpen(false);
+                  setMemoryIndex(0);
+                  setScene(1);
+                }}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                🌸 Replay Your Birthday
+              </motion.button>
+            </div>
+          </motion.section>
+        )}
 
       </AnimatePresence>
 
-
-
     </main>
-
-
-
   );
-
-
-
 }
